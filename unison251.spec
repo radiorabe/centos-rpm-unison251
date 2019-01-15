@@ -22,6 +22,9 @@
 # available in this Fedora branch/release? If so, we provide unison.
 %global provide_unison 1
 
+# icons root directory
+%global iconsdir %{_datadir}/icons
+
 Name:      unison%{ver_compat_name}
 Version:   %{ver_compat}%{ver_noncompat}
 Release:   1%{?dist}
@@ -31,9 +34,8 @@ Summary:   Multi-master File synchronization tool
 License:   GPLv3+
 URL:       http://www.cis.upenn.edu/~bcpierce/unison
 Source0:   https://github.com/bcpierce00/unison/archive/v%{version}.tar.gz
-Source1:   unison.png
-Source2:   http://www.cis.upenn.edu/~bcpierce/unison/download/releases/unison-%{ver_compat}.2/unison-manual.html
-Source3:   unison.appdata.xml
+Source1:   http://www.cis.upenn.edu/~bcpierce/unison/download/releases/unison-%{ver_compat}.2/unison-manual.html
+Source2:   unison.appdata.xml
 
 # can't make this noarch (rpmbuild fails about unpackaged debug files)
 # BuildArch:     noarch
@@ -112,7 +114,7 @@ Categories=Utility;
 EOF
 
 #additional documentation
-cp -a %{SOURCE2} .
+cp -a %{SOURCE1} .
 
 
 %build
@@ -136,18 +138,31 @@ ln -s %{_bindir}/unison-gtk-%{ver_compat} %{buildroot}%{_bindir}/unison-%{ver_co
 
 cp -a src/unison-text %{buildroot}%{_bindir}/unison-text-%{ver_compat}
 
-mkdir -p %{buildroot}%{_datadir}/pixmaps
-cp -a %{SOURCE1} %{buildroot}%{_datadir}/pixmaps/%{name}.png
+# Install the various icons according to the "Icon Theme Specification"
+# https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+for size in 16 24 32 48 256; do
+    format="${size}x${size}"
+    install -d %{buildroot}%{iconsdir}/hicolor/${format}/apps
+    install icons/U.${format}x16m.png \
+            %{buildroot}%{iconsdir}/hicolor/${format}/apps/%{name}.png
+done
+
+install -d %{buildroot}%{iconsdir}/hicolor/scalable/apps
+install icons/U.svg \
+        %{buildroot}%{iconsdir}/hicolor/scalable/apps/%{name}.svg
 
 desktop-file-install --dir %{buildroot}%{_datadir}/applications %{name}.desktop
 
 mkdir -p %{buildroot}%{_datadir}/metainfo
-cp -a %{SOURCE3} %{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml
+cp %{SOURCE2} %{buildroot}%{_datadir}/metainfo/%{name}.appdata.xml
 appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/*.appdata.xml
 
 # create/own alternatives target
 touch %{buildroot}%{_bindir}/unison
 
+%post gtk
+# https://fedoraproject.org/wiki/EPEL:Packaging#Icon_Cache
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 
 %posttrans gtk
 alternatives \
@@ -157,10 +172,19 @@ alternatives \
   %{_bindir}/unison-%{ver_compat} \
   %{ver_priority}
 
+# https://fedoraproject.org/wiki/EPEL:Packaging#Icon_Cache
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+
 %postun gtk
 if [ $1 -eq 0 ]; then
   alternatives --remove unison \
     %{_bindir}/unison-%{ver_compat}
+fi
+
+# https://fedoraproject.org/wiki/EPEL:Packaging#Icon_Cache
+if [ $1 -eq 0 ] ; then
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
 
 
@@ -191,7 +215,7 @@ fi
 %{_bindir}/unison-%{ver_compat}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/metainfo/%{name}.appdata.xml
-%{_datadir}/pixmaps/%{name}.png
+%{iconsdir}/*
 
 
 %files text
@@ -203,6 +227,7 @@ fi
 * Tue Jan 15 2019 Christian Affolter <c.affolter@purplehaze.ch - 2.51.2
 - Update to latest stable upstream release
 - Change upstream download source URL to GitHub
+- Install icons from upstream tarball in different sizes and formats
 
 * Mon Feb 12 2018 David Personette <dperson@gmail.com> - 2.48.15v4-2
 - Apply suggested changes from bug #1544239
