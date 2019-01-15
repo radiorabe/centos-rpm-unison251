@@ -1,8 +1,8 @@
 
 # These is the exact upstream version we are packaging
 %global ver_maj 2
-%global ver_min 48
-%global ver_patch 15v4
+%global ver_min 51
+%global ver_patch 2
 
 # All Unison versions sharing ver_compat are compatible
 # Examples are 2.13.15 and 2.13.16 -> ver_compat == 2.13
@@ -24,15 +24,15 @@
 
 Name:      unison%{ver_compat_name}
 Version:   %{ver_compat}%{ver_noncompat}
-Release:   2%{?dist}
+Release:   1%{?dist}
 
 Summary:   Multi-master File synchronization tool
 
 License:   GPLv3+
 URL:       http://www.cis.upenn.edu/~bcpierce/unison
-Source0:   http://www.cis.upenn.edu/~bcpierce/unison/download/releases/unison-%{version}/unison-%{version}.tar.gz
+Source0:   https://github.com/bcpierce00/unison/archive/v%{version}.tar.gz
 Source1:   unison.png
-Source2:   http://www.cis.upenn.edu/~bcpierce/unison/download/releases/unison-%{ver_compat}.4/unison-manual.html
+Source2:   http://www.cis.upenn.edu/~bcpierce/unison/download/releases/unison-%{ver_compat}.2/unison-manual.html
 Source3:   unison.appdata.xml
 
 # can't make this noarch (rpmbuild fails about unpackaged debug files)
@@ -200,6 +200,10 @@ fi
 
 
 %changelog
+* Tue Jan 15 2019 Christian Affolter <c.affolter@purplehaze.ch - 2.51.2
+- Update to latest stable upstream release
+- Change upstream download source URL to GitHub
+
 * Mon Feb 12 2018 David Personette <dperson@gmail.com> - 2.48.15v4-2
 - Apply suggested changes from bug #1544239
 
@@ -375,4 +379,3 @@ fi
 
 * Fri Oct 31 2003 Gerard Milmeister <gemi@bluewin.ch> - 0:2.9.70-0.fdr.1
 - First Fedora release
-

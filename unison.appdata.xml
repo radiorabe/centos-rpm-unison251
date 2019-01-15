@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 David Personette <dperson@gmail.com> -->
 <component type="desktop">
-  <id>unison248.desktop</id>
+  <id>unison251.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>
-  <name>Unison248</name>
+  <name>Unison251</name>
   <summary>Multi-master File synchronization tool - gtk interface</summary>
   <description>
     <p>
