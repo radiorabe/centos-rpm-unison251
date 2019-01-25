@@ -27,7 +27,7 @@
 
 Name:      unison%{ver_compat_name}
 Version:   %{ver_compat}%{ver_noncompat}
-Release:   1%{?dist}
+Release:   2%{?dist}
 
 Summary:   Multi-master File synchronization tool
 
@@ -138,6 +138,8 @@ ln -s %{_bindir}/unison-gtk-%{ver_compat} %{buildroot}%{_bindir}/unison-%{ver_co
 
 cp -a src/unison-text %{buildroot}%{_bindir}/unison-text-%{ver_compat}
 
+cp -a src/unison-fsmonitor %{buildroot}%{_bindir}/unison-fsmonitor-%{ver_compat}
+
 # Install the various icons according to the "Icon Theme Specification"
 # https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
 for size in 16 24 32 48 256; do
@@ -207,6 +209,7 @@ fi
 %files
 %doc src/NEWS src/README unison-manual.html
 %license src/COPYING
+%{_bindir}/unison-fsmonitor-%{ver_compat}
 
 
 %files gtk
@@ -224,7 +227,10 @@ fi
 
 
 %changelog
-* Tue Jan 15 2019 Christian Affolter <c.affolter@purplehaze.ch - 2.51.2
+* Fri Jan 25 2019 Christian Affolter <c.affolter@purplehaze.ch> - 2.51.2-2
+- Include unison-fsmonitor (the Unison filesystem monitor)
+
+* Tue Jan 15 2019 Christian Affolter <c.affolter@purplehaze.ch - 2.51.2-1
 - Update to latest stable upstream release
 - Change upstream download source URL to GitHub
 - Install icons from upstream tarball in different sizes and formats
